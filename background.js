@@ -1,32 +1,3 @@
-// Store hashes of previously shown news to avoid duplicates
-let seenNewsHashes = new Set()
-
-// Function to hash the content of a news article
-function hashNewsContent(title, description) {
-  const str = title + description
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
-    hash = (hash << 5) - hash + char
-    hash = hash & hash
-  }
-  return hash.toString()
-}
-
-// Function to check if news content is similar to previously shown news
-function isNewContent(title, description) {
-  const hash = hashNewsContent(title, description)
-  if (seenNewsHashes.has(hash)) {
-    return false
-  }
-  seenNewsHashes.add(hash)
-  // Keep the size of the set manageable
-  if (seenNewsHashes.size > 1000) {
-    seenNewsHashes.clear()
-  }
-  return true
-}
-
 // Function to fetch news based on preferences
 async function fetchNews(interests) {
   try {
@@ -141,7 +112,7 @@ function showNewsNotification(newsItem) {
 // Handle messages from popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'GET_IMMEDIATE_NEWS') {
-    fetchNews(message.interests)
+    checkAndShowNews()
       .then(news => {
         if (news && news.length > 0) {
           // Store the URLs of shown news to avoid duplicates
@@ -151,14 +122,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               newsHistory: news,
             })
             .then(() => {
-              // Show notification for the most recent news
-              showNewsNotification(news[0])
-
               // Send news back to popup
               sendResponse({ news })
-
               // Log for debugging
-              console.log('Showing notification for:', news[0].title)
+              console.log('Showing notifications for', news.length, 'articles')
             })
         } else {
           console.log('No news available to show')
@@ -230,17 +197,20 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.clear()
 })
 
-// Listen for preference updates and check news immediately
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === 'UPDATE_PREFERENCES') {
-    // Check news immediately after preferences update
-    chrome.storage.sync.get(['interests'], async ({ interests }) => {
-      if (interests && interests.length > 0) {
-        const news = await fetchNews(interests)
-        if (news && news.length > 0) {
-          showNewsNotification(news[0])
-        }
-      }
-    })
+// Function to check and show news
+async function checkAndShowNews() {
+  const { interests } = await chrome.storage.sync.get(['interests'])
+  if (interests && interests.length > 0) {
+    const news = await fetchNews(interests)
+    if (news && news.length > 0) {
+      news.forEach(newsItem => {
+        showNewsNotification(newsItem)
+      })
+      return news
+    }
   }
-})
+  return []
+}
+
+// Check for news when browser starts
+chrome.runtime.onStartup.addListener(checkAndShowNews)
