@@ -39,7 +39,7 @@ async function fetchNews(interests) {
 
     // If not forcing update and last update was less than 1 hour ago, return cached news
     if (!forceUpdate && lastUpdate && now - lastUpdate < 3600000) {
-      const { cachedNews } = await chrome.storage.sync.get('cachedNews')
+      const { cachedNews } = await chrome.storage.local.get('cachedNews')
       if (cachedNews && cachedNews.length > 0) {
         return cachedNews
       }
@@ -86,8 +86,10 @@ async function fetchNews(interests) {
     }, [])
 
     // Cache the results
-    await chrome.storage.sync.set({
+    await chrome.storage.local.set({
       cachedNews: allNews,
+    })
+    await chrome.storage.sync.set({
       lastUpdate: now,
     })
 
@@ -95,7 +97,7 @@ async function fetchNews(interests) {
   } catch (error) {
     console.error('Error fetching news:', error)
     // Try to return cached news if available
-    const { cachedNews } = await chrome.storage.sync.get('cachedNews')
+    const { cachedNews } = await chrome.storage.local.get('cachedNews')
     return cachedNews || []
   }
 }
@@ -143,7 +145,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       .then(news => {
         if (news && news.length > 0) {
           // Store the URLs of shown news to avoid duplicates
-          chrome.storage.sync
+          chrome.storage.local
             .set({
               lastShownNews: news.map(n => n.url),
               newsHistory: news,

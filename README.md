@@ -57,10 +57,11 @@ Before installing the extension, you need to get your API key:
 
 The extension will:
 
-- Show desktop notifications for new articles
-- Keep a history of recent news
+- Show desktop notifications for new articles when opening Chrome or updating preferences
+- Keep a history of recent news in local storage
 - Cache news for one hour to optimize API usage
 - Show 5 most recent articles per selected category
+- Handle large amounts of data efficiently using Chrome's local storage
 
 ## How it Works
 
@@ -69,16 +70,27 @@ The extension will:
    - Fetches news for selected categories
    - Shows a notification for the most recent article
    - Displays all articles in the Recent News section
+   - Caches news data locally for better performance
 
-2. News Updates:
-   - News is cached for 1 hour due to NewsAPI limitations
-   - New notifications only show for articles not previously shown
-   - News history maintains the latest articles per category
+2. Storage Management:
+
+   - Preferences (selected categories) are synced across devices
+   - News data, history, and cache are stored locally
+   - Efficient storage management to handle multiple categories
+   - Smart duplicate detection to avoid showing the same news twice
+
+3. News Updates:
+   - News is cached locally for 1 hour to optimize API usage
+   - New notifications show when browser opens or preferences change
+   - Each category shows its 5 most recent articles
+   - Articles can be filtered by category in the popup
 
 ## Permissions Used
 
-- `storage`: To save your preferences and news cache
-- `notifications`: To show desktop notifications
+- `storage`:
+  - Sync storage: For user preferences (selected categories)
+  - Local storage: For news cache, history, and notification data
+- `notifications`: To show desktop notifications for new articles
 - `activeTab`: To open news articles when clicked
 
 ## Development Notes
@@ -95,10 +107,16 @@ If you want to modify the extension:
 2. Key files:
 
    - `popup.html`: Extension UI
-   - `popup.js`: UI logic and news display
-   - `background.js`: News fetching and notification handling
+   - `popup.js`: UI logic, news display, and storage management
+   - `background.js`: News fetching, notification handling, and service worker functionality
 
-3. API Limitations (Free Plan):
+3. Storage Strategy:
+
+   - Preferences: Sync storage (for cross-device synchronization)
+   - News data: Local storage (for better performance with large datasets)
+   - Notifications: Local storage (for quick access to article data)
+
+4. API Limitations (Free Plan):
    - 100 requests per day
    - News updates every 24 hours
    - Developer version only

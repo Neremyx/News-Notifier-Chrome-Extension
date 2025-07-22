@@ -56,24 +56,22 @@ const displayNewsHistory = news => {
 
 document.addEventListener('DOMContentLoaded', () => {
   // Load saved preferences and news history
-  chrome.storage.sync.get(
-    {
-      interests: [],
-      newsHistory: [],
-    },
-    items => {
-      // Check the appropriate interest checkboxes
-      items.interests.forEach(interest => {
-        const checkbox = document.getElementById(interest)
-        if (checkbox) {
-          checkbox.checked = true
-        }
-      })
+  // Get interests from sync storage
+  chrome.storage.sync.get({ interests: [] }, syncItems => {
+    // Check the appropriate interest checkboxes
+    syncItems.interests.forEach(interest => {
+      const checkbox = document.getElementById(interest)
+      if (checkbox) {
+        checkbox.checked = true
+      }
+    })
 
+    // Get news history from local storage
+    chrome.storage.local.get({ newsHistory: [] }, localItems => {
       // Display existing news history
-      displayNewsHistory(items.newsHistory)
-    }
-  )
+      displayNewsHistory(localItems.newsHistory)
+    })
+  })
 
   // Set up category filter buttons
   document.getElementById('category-filter').addEventListener('click', e => {
@@ -113,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
           response => {
             if (response && response.news) {
               // Save and display the new articles
-              chrome.storage.sync.set({
+              chrome.storage.local.set({
                 newsHistory: response.news,
                 lastShownNews: response.news.map(n => n.url),
               })
