@@ -3,7 +3,7 @@
   "name": "News Notifier",
   "version": "1.0",
   "description": "Stay informed with customized news notifications delivered right to your browser. Select your favorite topics to receive relevant news updates.",
-  "permissions": ["storage", "notifications", "activeTab"],
+  "permissions": ["storage", "notifications", "activeTab", "alarms"],
   "host_permissions": ["https://newsapi.org/"],
   "background": {
     "service_worker": "background.js"

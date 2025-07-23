@@ -183,6 +183,16 @@ const handleCategoryFilter = e => {
   }
 }
 
+// Listen for storage changes to auto-update news
+chrome.storage.onChanged.addListener((changes, area) => {
+  // Check if newsHistory was updated in local storage
+  if (area === 'local' && changes.newsHistory) {
+    console.log('News history updated, refreshing display...')
+    const newNews = changes.newsHistory.newValue || []
+    displayNews(newNews)
+  }
+})
+
 // Initialize the popup
 document.addEventListener('DOMContentLoaded', () => {
   initElements()

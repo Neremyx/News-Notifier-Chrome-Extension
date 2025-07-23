@@ -13,7 +13,9 @@ A Chrome extension that keeps you updated with the latest news based on your int
   - Technology
 - **Modern Dark Theme Interface**: Clean, responsive design with organized 2-column layout
 - **Category Filters**: Filter news history by specific categories
-- **Desktop Notifications**: Receive notifications for new articles with click-to-read functionality
+- **Desktop Notifications**: Receive automatic notifications for new articles with click-to-read functionality
+- **Automatic Updates**: Real-time popup updates when new articles are detected (no manual refresh needed)
+- **Periodic News Checking**: Automatic background monitoring every 30 minutes for fresh content
 - **Smart Duplicate Detection**: Advanced filtering to avoid notification spam
 - **Local News History**: View and browse recent articles within the extension
 - **One-Click Article Access**: Direct links to full articles
@@ -63,13 +65,16 @@ Before installing the extension, you need to get your API key:
    - Click on any article title to read the full story on the original website
 
 3. **Notifications**:
-   - Receive desktop notifications when new articles are available
+   - Receive automatic desktop notifications when new articles are available
    - Click notifications to open articles directly
-   - Notifications appear when the browser starts or when updating preferences
+   - Notifications appear automatically every 30 minutes, when the browser starts, or when updating preferences
+   - **Real-time Updates**: The popup automatically refreshes to show new articles without manual interaction
 
 The extension will automatically:
 
+- **Monitor for new articles every 30 minutes** with background checking system
 - Cache news for one hour to optimize API usage and performance
+- **Update the popup interface in real-time** when new articles are detected
 - Handle multiple categories simultaneously without storage quota issues
 - Keep a searchable history of recent articles
 - Prevent duplicate notifications for the same articles
@@ -93,10 +98,12 @@ The extension will automatically:
    - **Efficient Duplicate Detection**: Advanced filtering to avoid showing the same articles twice
 
 3. **News Updates**:
+   - **Automatic Background Monitoring**: Extension checks for new articles every 30 minutes automatically
    - **Smart Caching**: News cached locally for 1 hour to optimize API usage
-   - **Multiple Triggers**: Updates occur when browser starts, preferences change, or manual refresh
+   - **Multiple Triggers**: Updates occur periodically, when browser starts, preferences change, or manual refresh
+   - **Real-time Popup Updates**: Interface automatically refreshes when new articles are detected
    - **Category Management**: Each category shows recent articles with efficient filtering
-   - **Real-time Filtering**: Dynamic category filters in the popup interface
+   - **Dynamic Filtering**: Real-time category filters in the popup interface
 
 ## Permissions Used
 
@@ -105,6 +112,7 @@ The extension will automatically:
   - **Local storage**: For news cache, history, and notification data - optimized for large datasets
 - **`notifications`**: To show desktop notifications for new articles with click-to-read functionality
 - **`activeTab`**: To open news articles in new tabs when clicked
+- **`alarms`**: For periodic background checking of new articles every 30 minutes
 
 ## Development Notes
 
@@ -129,9 +137,23 @@ If you want to modify the extension:
    - **News data**: Chrome local storage (for better performance with large datasets)
    - **Notifications**: Local storage (for quick access to article data)
    - **Hybrid Approach**: Prevents storage quota errors when using multiple categories simultaneously
+   - **Real-time Updates**: Storage change listeners enable automatic popup refreshing
 
-4. **API Limitations (Free Plan)**:
+4. **Automatic Updates System**:
+
+   - **Background Alarms**: Chrome alarms API triggers news checking every 30 minutes
+   - **Storage Listeners**: Popup automatically detects and displays new articles
+   - **Efficient Monitoring**: Smart caching prevents excessive API calls while maintaining freshness
+
+5. **API Limitations (Free Plan)**:
+
    - 100 requests per day
    - Development use only
    - Standard update frequency
    - No real-time breaking news
+
+6. **Background Processing**:
+   - Service worker architecture for efficient resource usage
+   - Automatic news checking every 30 minutes via Chrome alarms
+   - Real-time popup updates using storage change listeners
+   - Smart notification management to prevent spam

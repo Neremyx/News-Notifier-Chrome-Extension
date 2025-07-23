@@ -195,6 +195,20 @@ chrome.runtime.onInstalled.addListener(() => {
   // Reset all storage on extension install/update
   chrome.storage.sync.clear()
   chrome.storage.local.clear()
+
+  // Create alarm for periodic news checking (every 30 minutes)
+  chrome.alarms.create('checkNews', {
+    delayInMinutes: 30,
+    periodInMinutes: 30,
+  })
+})
+
+// Handle alarm events
+chrome.alarms.onAlarm.addListener(alarm => {
+  if (alarm.name === 'checkNews') {
+    console.log('Alarm triggered: checking for news updates...')
+    checkAndShowNews()
+  }
 })
 
 // Function to check and show news
@@ -203,9 +217,18 @@ async function checkAndShowNews() {
   if (interests && interests.length > 0) {
     const news = await fetchNews(interests)
     if (news && news.length > 0) {
+      // Store the news in history for popup to display
+      await chrome.storage.local.set({
+        newsHistory: news,
+        lastShownNews: news.map(n => n.url),
+      })
+
+      // Show notifications
       news.forEach(newsItem => {
         showNewsNotification(newsItem)
       })
+
+      console.log('Updated news history with', news.length, 'articles')
       return news
     }
   }
