@@ -1,5 +1,11 @@
 # News Notifier Chrome Extension
 
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/Neremyx/News-Notifier-Chrome-Extension)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-brightgreen.svg)](https://developer.chrome.com/docs/extensions/)
+[![Manifest V3](https://img.shields.io/badge/Manifest-V3-orange.svg)](https://developer.chrome.com/docs/extensions/mv3/intro/)
+[![NewsAPI](https://img.shields.io/badge/NewsAPI-Integration-red.svg)](https://newsapi.org)
+
 A Chrome extension that keeps you updated with the latest news based on your interests using the NewsAPI.org service.
 
 ## Features
